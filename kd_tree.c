@@ -48,7 +48,7 @@ float distanceSquared(float p1[], float p2[])
     return dist;
 }
 
-// Helper to add a neighbor to a sorted array of neighbors
+// Helper to add a neighbor to a sorted array of neighborsss
 void addNeighbor(struct Neighbor neighbors[], int k_neighbors, int *count, struct Node* node, float dist)
 {
     // If not full, just insert and sort
@@ -68,7 +68,7 @@ void addNeighbor(struct Neighbor neighbors[], int k_neighbors, int *count, struc
             }
         }
     } else {
-        // If full, check if dist is smaller than the largest distance (last element)
+        // If full check if dist is smaller than the largest distance (last element)
         if (dist < neighbors[k_neighbors-1].distance) {
             neighbors[k_neighbors-1].distance = dist;
             neighbors[k_neighbors-1].node = node;
@@ -93,7 +93,7 @@ void kNearestNeighbors(struct Node* root, float target[], int depth,
     if(root == NULL)
         return;
 
-    // Increment our efficiency counter every time we visit a node
+    // Increment our efficiency counter everyyy time we visit a node
     (*nodes_visited)++;
 
     float d = distanceSquared(root->point, target);
@@ -115,8 +115,9 @@ void kNearestNeighbors(struct Node* root, float target[], int depth,
 
     float diff = target[cd] - root->point[cd];
     
-    // Check if we need to explore the other branch
+    // Check if we need to explore the other branchhh
     // If we don't have enough neighbors yet, or if the bounding box intersects the search sphere
+    // pruning logic
     float current_worst_dist = (*count < k_neighbors) ? FLT_MAX : neighbors[k_neighbors-1].distance;
 
     if(diff*diff < current_worst_dist) {
@@ -147,7 +148,7 @@ void classifyPoint(struct Node* root, float target[], int k_neighbors)
         printf(") | Class = %s\n", neighbors[i].node->class_name);
     }
 
-    // Majority voting
+    // Majority voting to decide class
     char unique_classes[100][30];
     int class_counts[100] = {0};
     int num_unique = 0;
@@ -195,7 +196,7 @@ void loadIrisData(struct Node **root)
     char class_name[30];
     int count = 0;
 
-    // Read comma-separated values from iris.txt
+    // Read comma separated values from iris.txt
     while(fscanf(fp,"%f,%f,%f,%f,%29s", &point[0], &point[1], &point[2], &point[3], class_name) == 5) {
         *root = insert(*root, point, class_name, 0);
         count++;
