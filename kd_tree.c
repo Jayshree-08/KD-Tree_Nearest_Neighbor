@@ -88,10 +88,13 @@ void addNeighbor(struct Neighbor neighbors[], int k_neighbors, int *count, struc
 }
 
 void kNearestNeighbors(struct Node* root, float target[], int depth,
-                       struct Neighbor neighbors[], int k_neighbors, int *count)
+                       struct Neighbor neighbors[], int k_neighbors, int *count, int *nodes_visited)
 {
     if(root == NULL)
         return;
+
+    // Increment our efficiency counter every time we visit a node
+    (*nodes_visited)++;
 
     float d = distanceSquared(root->point, target);
     addNeighbor(neighbors, k_neighbors, count, root, d);
@@ -108,7 +111,7 @@ void kNearestNeighbors(struct Node* root, float target[], int depth,
         otherBranch = root->left;
     }
 
-    kNearestNeighbors(nextBranch, target, depth+1, neighbors, k_neighbors, count);
+    kNearestNeighbors(nextBranch, target, depth+1, neighbors, k_neighbors, count, nodes_visited);
 
     float diff = target[cd] - root->point[cd];
     
@@ -117,7 +120,7 @@ void kNearestNeighbors(struct Node* root, float target[], int depth,
     float current_worst_dist = (*count < k_neighbors) ? FLT_MAX : neighbors[k_neighbors-1].distance;
 
     if(diff*diff < current_worst_dist) {
-        kNearestNeighbors(otherBranch, target, depth+1, neighbors, k_neighbors, count);
+        kNearestNeighbors(otherBranch, target, depth+1, neighbors, k_neighbors, count, nodes_visited);
     }
 }
 
@@ -130,10 +133,12 @@ void classifyPoint(struct Node* root, float target[], int k_neighbors)
 
     struct Neighbor* neighbors = (struct Neighbor*)malloc(k_neighbors * sizeof(struct Neighbor));
     int count = 0;
+    int nodes_visited = 0; // Initialize our new efficiency counter
 
-    kNearestNeighbors(root, target, 0, neighbors, k_neighbors, &count);
+    kNearestNeighbors(root, target, 0, neighbors, k_neighbors, &count, &nodes_visited);
 
     printf("\n--- Top %d Nearest Neighbors ---\n", count);
+    printf("=> EFFICIENCY: Visited only %d nodes to find the top %d neighbors!\n", nodes_visited, k_neighbors);
     for(int i=0; i<count; i++) {
         printf("%d: Distance = %.4f | Point = (", i+1, neighbors[i].distance);
         for(int j=0; j<K_DIM; j++) {
